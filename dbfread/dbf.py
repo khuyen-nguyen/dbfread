@@ -1,10 +1,12 @@
 """
 Class to read DBF files.
 """
+from copy import deepcopy
 import os
 import sys
 import datetime
 import collections
+import io
 
 from .ifiles import ifind
 from .struct_parser import StructParser
@@ -83,7 +85,9 @@ class DBF(object):
                  load=False,
                  raw=False,
                  ignore_missing_memofile=False,
-                 char_decode_errors='strict'):
+                 char_decode_errors='strict',
+                 filedata=None,
+                 memofile=None):
 
         self.encoding = encoding
         self.ignorecase = ignorecase
@@ -104,7 +108,10 @@ class DBF(object):
         self._records = None
         self._deleted = None
 
-        if ignorecase:
+        if filedata is not None:
+            self._dbf_bytes = io.BytesIO(filedata.read())
+            self.filename = filename
+        elif ignorecase:
             self.filename = ifind(filename)
             if not self.filename:
                 raise DBFNotFound('could not find file {!r}'.format(filename))
@@ -112,12 +119,11 @@ class DBF(object):
             self.filename = filename
 
         # Filled in by self._read_headers()
-        self.memofilename = None
         self.header = None
         self.fields = []       # namedtuples
         self.field_names = []  # strings
 
-        with open(self.filename, mode='rb') as infile:
+        with self.dbf_bytes() as infile:
             self._read_header(infile)
             self._read_field_headers(infile)
             self._check_headers()
@@ -130,7 +136,10 @@ class DBF(object):
                 # Invalid date or '\x00\x00\x00'.
                 self.date = None
  
-        self.memofilename = self._get_memofilename()
+        if memofile is None:
+            self.memofilename = self._get_memofilename()
+        else:
+            self._memofile = memofile
 
         if load:
             self.load()
@@ -138,6 +147,14 @@ class DBF(object):
     @property
     def dbversion(self):
         return get_dbversion_string(self.header.dbversion)
+
+    def dbf_bytes(self):
+        """Produce a fresh copy of the DBF bytes as a file-like object."""
+        if getattr(self, "_dbf_bytes", None) is not None:
+            self._dbf_bytes.seek(0)
+            return io.BytesIO(self._dbf_bytes.read())
+
+        return open(self.filename, "rb")
 
     def _get_memofilename(self):
         # Does the table have a memo field?
@@ -241,15 +258,19 @@ class DBF(object):
             self.fields.append(field)
 
     def _open_memofile(self):
+        if getattr(self, "_memofile", None) is not None:
+            self._memofile.seek(0)
+            return deepcopy(self._memofile)
+
         if self.memofilename and not self.raw:
             return open_memofile(self.memofilename, self.header.dbversion)
         else:
             return FakeMemoFile(self.memofilename)
 
     def _check_headers(self):
+        """Check headers for possible format errors."""
         field_parser = self.parserclass(self)
 
-        """Check headers for possible format errors."""
         for field in self.fields:
 
             if field.type == 'I' and field.length != 4:
@@ -271,7 +292,7 @@ class DBF(object):
     def _count_records(self, record_type=b' '):
         count = 0
 
-        with open(self.filename, 'rb') as infile:
+        with self.dbf_bytes() as infile:
             # Skip to first record.
             infile.seek(self.header.headerlen, 0)
 
@@ -289,7 +310,7 @@ class DBF(object):
         return count
 
     def _iter_records(self, record_type=b' '):
-        with open(self.filename, 'rb') as infile, \
+        with self.dbf_bytes() as infile, \
              self._open_memofile() as memofile:
 
             # Skip to first record.

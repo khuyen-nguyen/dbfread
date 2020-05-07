@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from dbfread import DBF
+from dbfread.memo import VFPMemoFile
 
 TESTCASE_PATH = Path(__file__).parent.parent / "testcases"
 
@@ -46,7 +47,8 @@ class TestDBF:
 
         with memotest.open("rb") as mt:
             with memomemo.open("rb") as mm:
-                data = DBF.from_file_object(mt, mm)
+                data = DBF("memotest", filedata=mt,
+                           memofile=VFPMemoFile(mm.read()))
 
         assert data.__class__ is DBF
 
