@@ -2,8 +2,12 @@ __pycache__
 *.pyc
 *.pyo
 *~
+*.swp
+.coverage
 .cache/
+.tox/
+/venv/
 /docs/_build/
 /dist/
 /build/
-/*.egg-info/
+/**/*.egg-info/
