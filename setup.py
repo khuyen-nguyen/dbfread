@@ -45,6 +45,7 @@ setup(
         "doc": doc_requires,
         "test": test_requires,
         },
+    scripts=["examples/dbf2sqlite"],
     python_requires=">=3.6",
     license="MIT",
     classifiers=(
