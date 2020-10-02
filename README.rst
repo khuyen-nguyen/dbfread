@@ -1,5 +1,14 @@
 dbfread - Read DBF Files with Python
 ====================================
+.. image:: https://img.shields.io/github/workflow/status/catalyst-cooperative/dbfread/tox-pytest
+  :alt: GitHub Workflow Status
+  :target: https://github.com/catalyst-cooperative/dbfread/actions?query=workflow%3Atox-pytest
+.. image:: https://codecov.io/gh/catalyst-cooperative/dbfread/branch/master/graph/badge.svg
+  :alt: CodeCov Test Coverage
+  :target: https://codecov.io/gh/catalyst-cooperative/dbfread
+.. image:: https://img.shields.io/pypi/pyversions/catalystcoop.dbfread
+  :alt: PyPI - Python Versions
+
 
 DBF is a file format used by databases such dBase, Visual FoxPro, and
 FoxBase+. This library reads DBF files and returns the data as native
@@ -26,13 +35,11 @@ random access::
 
 Full documentation at https://dbfread.readthedocs.io/
 
-See docs/changes.rst for a full list of changes in each version.
+See ``docs/changes.rst`` for a full list of changes in each version.
 
 
 Main Features
 -------------
-
-* written for Python 3, but also works in 2.7
 
 * simple but flexible API
 
@@ -58,18 +65,18 @@ Main Features
 Installing
 ----------
 
-Requires Python 3.2 or 2.7.
+Requires Python 3.6+
 
 ::
 
-  pip install dbfread
+  pip install catalystcoop.dbfread
 
 ``dbfread`` is a pure Python module and doesn't depend on any packages
 outside the standard library.
 
 To build documentation locally::
 
-    python setup.py docs
+    sphinx-build docs/ docs/_build
 
 This requires Sphinx. The resulting files can be found in
 ``docs/_build/``.
@@ -78,7 +85,7 @@ This requires Sphinx. The resulting files can be found in
 Source code
 ------------
 
-http://github.com/olemb/dbfread/
+http://github.com/catalyst-cooperative/dbfread/
 
 
 API Changes

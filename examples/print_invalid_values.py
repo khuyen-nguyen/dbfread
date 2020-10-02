@@ -15,4 +15,4 @@ table = DBF('files/invalid_value.dbf', parserclass=MyFieldParser)
 for i, record in enumerate(table):
     for name, value in record.items():
         if isinstance(value, InvalidValue):
-            print('records[{}][{!r}] == {!r}'.format(i, name, value))
+            print(f'records[{i}][{name!r}] == {value!r}')

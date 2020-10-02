@@ -5,19 +5,19 @@ The struct can be read from a file or a byte string.
 """
 
 import struct
-import collections
 
 
 def _make_struct_class(name, names):
     class Struct(object):
         _names = names
+
         def __init__(self, **kwargs):
             vars(self).update(kwargs)
 
         def __repr__(self):
             fields = ', '.join('{}={!r}'.format(name, getattr(self, name))
                                for name in self._names)
-            return '{}({})'.format(self.__class__.__name__, fields)
+            return f'{self.__class__.__name__}({fields})'
 
     Struct.__name__ = name
     return Struct

@@ -1,29 +1,15 @@
-"""
-Parser for DBF fields.
-"""
-import sys
+"""Parser for DBF fields."""
 import datetime
 import struct
 from decimal import Decimal
-from .memo import BinaryMemo
-
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    decode_text = unicode
-else:
-    decode_text = str
+from dbfread.memo import BinaryMemo
 
 
 class InvalidValue(bytes):
     def __repr__(self):
         text = bytes.__repr__(self)
-        if PY2:
-            # Make sure the string starts with "b'" in
-            # "InvalidValue(b'value here')".
-            text = 'b' + text
+        return f'InvalidValue({text})'
 
-        return 'InvalidValue({})'.format(text)
 
 class FieldParser:
     def __init__(self, table, memofile=None):
@@ -42,7 +28,7 @@ class FieldParser:
             self.get_memo = lambda x: None
 
     def decode_text(self, text):
-        return decode_text(text, self.encoding, errors=self.char_decode_errors)
+        return str(text, self.encoding, errors=self.char_decode_errors)
 
     def _create_lookup_table(self):
         """Create a lookup table for field types."""
@@ -74,7 +60,7 @@ class FieldParser:
         try:
             func = self._lookup[field.type]
         except KeyError:
-            raise ValueError('Unknown field type: {!r}'.format(field.type))
+            raise ValueError(f'Unknown field type: {field.type!r}')
         else:
             return func(field, data)
 
@@ -96,7 +82,7 @@ class FieldParser:
                 # a NULL value.
                 return None
             else:
-                raise ValueError('invalid date {!r}'.format(data))
+                raise ValueError(f'invalid date {data!r}')
 
     def parseF(self, field, data):
         """Parse float field and return float or None"""
@@ -137,7 +123,7 @@ class FieldParser:
                     return 0
                 else:
                     raise ValueError(
-                        'Memo index is not an integer: {!r}'.format(data))
+                        f'Memo index is not an integer: {data!r}')
 
     def parseM(self, field, data):
         """Parse memo field (M, G, B or P)
@@ -205,7 +191,7 @@ class FieldParser:
             day, msec = struct.unpack('<LL', data)
             if day:
                 dt = datetime.datetime.fromordinal(day - offset)
-                delta = datetime.timedelta(seconds=msec/1000)
+                delta = datetime.timedelta(seconds=msec / 1000)
                 return dt + delta
             else:
                 return None
@@ -221,7 +207,6 @@ class FieldParser:
 
         # Currency fields are stored with 4 points of precision
         return Decimal(value) / 10000
-
 
     def parseB(self, field, data):
         """Binary memo field or double precision floating point number
@@ -246,7 +231,6 @@ class FieldParser:
 
         The raw data is returned as a binary string."""
         return self.get_memo(self._parse_memo_index(data))
-
 
     # Autoincrement field ('+')
     parse2B = parseI
