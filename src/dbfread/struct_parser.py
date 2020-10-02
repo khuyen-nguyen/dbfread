@@ -11,6 +11,7 @@ import collections
 def _make_struct_class(name, names):
     class Struct(object):
         _names = names
+
         def __init__(self, **kwargs):
             vars(self).update(kwargs)
 

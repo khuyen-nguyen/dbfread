@@ -17,11 +17,11 @@ __email__ = 'ombdalen@gmail.com'
 __url__ = 'https://dbfread.readthedocs.io/'
 __license__ = 'MIT'
 
-from .dbf import DBF
-from .deprecated_dbf import open, read
-from .exceptions import *
-from .field_parser import FieldParser, InvalidValue
-from .version import version_info, version as __version__
+from dbfread.dbf import DBF
+from dbfread.deprecated_dbf import open, read
+from dbfread.exceptions import *
+from dbfread.field_parser import FieldParser, InvalidValue
+from dbfread.version import version_info, version as __version__
 
 # Prevent splat import.
 __all__ = []

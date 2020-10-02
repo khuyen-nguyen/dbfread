@@ -25,8 +25,8 @@ setup(
     description="Read DBF Files with Python",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    author="Catalyst Cooperative",
-    author_email="pudl@catalyst.coop",
+    author="Ole Martin Bjorndalen",
+    author_email="ombdalen@gmail.com",
     url="https://github.com/catalyst-cooperative/dbfread",
     maintainer="Zane A. Selvans",
     maintainer_email="zane.selvans@catalyst.coop",
@@ -45,6 +45,7 @@ setup(
         "doc": doc_requires,
         "test": test_requires,
         },
+    python_requires=">=3.6",
     license="MIT",
     classifiers=(
         "Development Status :: 5 - Production/Stable",

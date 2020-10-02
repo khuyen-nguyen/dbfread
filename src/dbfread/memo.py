@@ -10,8 +10,8 @@ DB4 == dBase IV
 """
 import io
 
-from .ifiles import ifind
-from .struct_parser import StructParser
+from dbfread.ifiles import ifind
+from dbfread.struct_parser import StructParser
 
 
 VFPFileHeader = StructParser(
@@ -93,6 +93,7 @@ class VFPMemoFile(io.BytesIO):
 
 class DB3MemoFile(io.BytesIO):
     """dBase III memo file."""
+
     def __getitem__(self, index):
         if index <= 0:
             return None
@@ -123,6 +124,7 @@ class DB3MemoFile(io.BytesIO):
 
 class DB4MemoFile(io.BytesIO):
     """dBase IV memo file"""
+
     def __getitem__(self, index):
         if index <= 0:
             return None
