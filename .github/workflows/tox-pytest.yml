@@ -1,4 +1,4 @@
-name: pytest
+name: tox-pytest
 
 on: [ push, pull_request ]
 
@@ -23,11 +23,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
 
-    - name: Run PyTest with Tox
-      run: tox -ve pytest
-
-    - name: Run Sphinx docs build with Tox
-      run: tox -ve docs
+    - name: PyTest and Sphinx
+      run: tox -ve ci
 
     - name: Upload test coverage report to CodeCov
       uses: codecov/codecov-action@v1
