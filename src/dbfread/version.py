@@ -15,5 +15,5 @@ def _make_version_info(version):
     return VersionInfo(major, minor, micro, releaselevel, 0)
 
 
-version = '2.1.0'
+version = '2.1.1'
 version_info = _make_version_info(version)
