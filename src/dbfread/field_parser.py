@@ -1,28 +1,13 @@
-"""
-Parser for DBF fields.
-"""
-import sys
+"""Parser for DBF fields."""
 import datetime
 import struct
 from decimal import Decimal
 from dbfread.memo import BinaryMemo
 
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    decode_text = unicode
-else:
-    decode_text = str
-
 
 class InvalidValue(bytes):
     def __repr__(self):
         text = bytes.__repr__(self)
-        if PY2:
-            # Make sure the string starts with "b'" in
-            # "InvalidValue(b'value here')".
-            text = 'b' + text
-
         return 'InvalidValue({})'.format(text)
 
 
@@ -43,7 +28,7 @@ class FieldParser:
             self.get_memo = lambda x: None
 
     def decode_text(self, text):
-        return decode_text(text, self.encoding, errors=self.char_decode_errors)
+        return str(text, self.encoding, errors=self.char_decode_errors)
 
     def _create_lookup_table(self):
         """Create a lookup table for field types."""

@@ -1,9 +1,6 @@
-"""
-Class to read DBF files.
-"""
+"""Class to read DBF files."""
 from copy import deepcopy
 import os
-import sys
 import datetime
 import collections
 import io
@@ -11,10 +8,10 @@ import io
 from dbfread.ifiles import ifind
 from dbfread.struct_parser import StructParser
 from dbfread.field_parser import FieldParser
-from dbfread.memo import find_memofile, open_memofile, FakeMemoFile, BinaryMemo
+from dbfread.memo import find_memofile, open_memofile, FakeMemoFile
 from dbfread.codepages import guess_encoding
 from dbfread.dbversions import get_dbversion_string
-from dbfread.exceptions import *
+from dbfread.exceptions import DBFNotFound, MissingMemoFile
 
 DBFHeader = StructParser(
     'DBFHeader',
@@ -57,7 +54,6 @@ DBFField = StructParser(
 
 def expand_year(year):
     """Convert 2-digit year to 4-digit year."""
-
     if year < 80:
         return 2000 + year
     else:
@@ -176,7 +172,7 @@ class DBF(object):
 
     @property
     def loaded(self):
-        """``True`` if records are loaded into memory."""
+        """Return ``True`` if records are loaded into memory."""
         return self._records is not None
 
     def load(self):

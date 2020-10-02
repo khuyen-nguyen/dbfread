@@ -4,6 +4,7 @@ __pycache__
 *~
 *.swp
 .coverage
+coverage.xml
 .cache/
 .tox/
 /venv/
