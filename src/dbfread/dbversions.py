@@ -24,4 +24,4 @@ def get_dbversion_string(dbversion):
     try:
         return DBVERSION_STRINGS[dbversion]
     except KeyError:
-        return 'Unknown (0x{:02x})'.format(dbversion)
+        return f'Unknown (0x{dbversion:02x})'

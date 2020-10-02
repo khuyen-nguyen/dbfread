@@ -7,6 +7,7 @@ __pycache__
 coverage.xml
 .cache/
 .tox/
+.env/
 /venv/
 /docs/_build/
 /dist/

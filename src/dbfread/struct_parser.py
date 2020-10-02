@@ -17,7 +17,7 @@ def _make_struct_class(name, names):
         def __repr__(self):
             fields = ', '.join('{}={!r}'.format(name, getattr(self, name))
                                for name in self._names)
-            return '{}({})'.format(self.__class__.__name__, fields)
+            return f'{self.__class__.__name__}({fields})'
 
     Struct.__name__ = name
     return Struct

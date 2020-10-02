@@ -111,7 +111,7 @@ class DBF(object):
         elif ignorecase:
             self.filename = ifind(filename)
             if not self.filename:
-                raise DBFNotFound('could not find file {!r}'.format(filename))
+                raise DBFNotFound(f'could not find file {filename!r}')
         else:
             self.filename = filename
 
@@ -165,8 +165,7 @@ class DBF(object):
             if self.ignore_missing_memofile:
                 return None
             else:
-                raise MissingMemoFile('missing memo file for {}'.format(
-                    self.filename))
+                raise MissingMemoFile(f'missing memo file for {self.filename}')
         else:
             return path
 
@@ -280,7 +279,7 @@ class DBF(object):
 
             elif not field_parser.field_type_supported(field.type):
                 # Todo: return as byte string?
-                raise ValueError('Unknown field type: {!r}'.format(field.type))
+                raise ValueError(f'Unknown field type: {field.type!r}')
 
     def _skip_record(self, infile):
         # -1 for the record separator which was already read.
@@ -355,7 +354,7 @@ class DBF(object):
             status = 'loaded'
         else:
             status = 'unloaded'
-        return '<{} DBF table {!r}>'.format(status, self.filename)
+        return f'<{status} DBF table {self.filename!r}>'
 
     def __enter__(self):
         return self

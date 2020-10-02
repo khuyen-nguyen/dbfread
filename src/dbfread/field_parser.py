@@ -8,7 +8,7 @@ from dbfread.memo import BinaryMemo
 class InvalidValue(bytes):
     def __repr__(self):
         text = bytes.__repr__(self)
-        return 'InvalidValue({})'.format(text)
+        return f'InvalidValue({text})'
 
 
 class FieldParser:
@@ -60,7 +60,7 @@ class FieldParser:
         try:
             func = self._lookup[field.type]
         except KeyError:
-            raise ValueError('Unknown field type: {!r}'.format(field.type))
+            raise ValueError(f'Unknown field type: {field.type!r}')
         else:
             return func(field, data)
 
@@ -82,7 +82,7 @@ class FieldParser:
                 # a NULL value.
                 return None
             else:
-                raise ValueError('invalid date {!r}'.format(data))
+                raise ValueError(f'invalid date {data!r}')
 
     def parseF(self, field, data):
         """Parse float field and return float or None"""
@@ -123,7 +123,7 @@ class FieldParser:
                     return 0
                 else:
                     raise ValueError(
-                        'Memo index is not an integer: {!r}'.format(data))
+                        f'Memo index is not an integer: {data!r}')
 
     def parseM(self, field, data):
         """Parse memo field (M, G, B or P)

@@ -40,7 +40,7 @@ class DeprecatedDBF(DBF, list):
         if self.loaded:
             return list.__repr__(self)
         else:
-            return '<unloaded DBF table {!r}>'.format(self.filename)
+            return f'<unloaded DBF table {self.filename!r}>'
 
 
 def read(filename, load=True, **kwargs):
