@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
+from zipfile import ZipFile
 from dbfread import DBF
 from dbfread.memo import VFPMemoFile
 
 TESTCASE_PATH = Path(__file__).parent.parent / "testcases"
+
 
 class TestDBF:
     """Validate the DBF interface"""
@@ -47,10 +49,24 @@ class TestDBF:
 
         with memotest.open("rb") as mt:
             with memomemo.open("rb") as mm:
-                data = DBF("memotest", filedata=mt,
-                           memofile=VFPMemoFile(mm.read()))
+                data = DBF("memotest", filedata=mt, memofile=VFPMemoFile(mm.read()))
 
         assert data.__class__ is DBF
 
         dataset = list(data)
-        self.check_alice_bob(dataset[0], dataset[1]) 
+        self.check_alice_bob(dataset[0], dataset[1])
+
+    def test_zipfile_object_open(self):
+        """Make sure we can open by passing zipfile paths."""
+        zf = ZipFile(TESTCASE_PATH / "testcases.zip")
+        memotest_path_str = str(Path("testcases/memotest.dbf"))
+        memomemo_path_str = str(Path("testcases/memotest.FPT"))
+
+        with zf.open(memotest_path_str) as mt:
+            with zf.open(memomemo_path_str) as mm:
+                data = DBF("memotest", filedata=mt, memofile=VFPMemoFile(mm.read()))
+
+        assert data.__class__ is DBF
+
+        dataset = list(data)
+        self.check_alice_bob(dataset[0], dataset[1])
