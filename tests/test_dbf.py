@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from pathlib import Path
+from pathlib import Path, PosixPath
 from zipfile import ZipFile
 from dbfread import DBF
 from dbfread.memo import VFPMemoFile
@@ -12,7 +12,7 @@ TESTCASE_PATH = Path(__file__).parent.parent / "testcases"
 
 
 class TestDBF:
-    """Validate the DBF interface"""
+    """Validate the DBF interface."""
 
     def check_alice_bob(self, alice, bob):
         """Make sure Alice and Bob are accurate."""
@@ -60,11 +60,26 @@ class TestDBF:
         self.check_alice_bob(dataset[0], dataset[1])
 
     @pytest.mark.xfail(os.name != "posix", reason="ZipFiles use POSIX paths.")
-    def test_zipfile_object_open(self):
-        """Make sure we can open by passing zipfile paths."""
+    def test_zipfile_path_open(self):
+        """Make sure we can open by passing OS specific zipfile paths."""
         zf = ZipFile(TESTCASE_PATH / "testcases.zip")
         memotest_path_str = str(Path("testcases/memotest.dbf"))
         memomemo_path_str = str(Path("testcases/memotest.FPT"))
+
+        with zf.open(memotest_path_str) as mt:
+            with zf.open(memomemo_path_str) as mm:
+                data = DBF("memotest", filedata=mt, memofile=VFPMemoFile(mm.read()))
+
+        assert data.__class__ is DBF
+
+        dataset = list(data)
+        self.check_alice_bob(dataset[0], dataset[1])
+
+    def test_zipfile_posixpath_open(self):
+        """Make sure we can open by passing POSIX zipfile paths."""
+        zf = ZipFile(TESTCASE_PATH / "testcases.zip")
+        memotest_path_str = str(PosixPath("testcases/memotest.dbf"))
+        memomemo_path_str = str(PosixPath("testcases/memotest.FPT"))
 
         with zf.open(memotest_path_str) as mt:
             with zf.open(memomemo_path_str) as mm:
