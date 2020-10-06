@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import os
 from pathlib import Path
 from zipfile import ZipFile
 from dbfread import DBF
 from dbfread.memo import VFPMemoFile
+
+import pytest
 
 TESTCASE_PATH = Path(__file__).parent.parent / "testcases"
 
@@ -56,6 +59,7 @@ class TestDBF:
         dataset = list(data)
         self.check_alice_bob(dataset[0], dataset[1])
 
+    @pytest.mark.xfail(os.name != "posix", reason="ZipFiles use POSIX paths.")
     def test_zipfile_object_open(self):
         """Make sure we can open by passing zipfile paths."""
         zf = ZipFile(TESTCASE_PATH / "testcases.zip")
