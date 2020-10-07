@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-import sys
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -9,6 +7,7 @@ test_requires = [
     "coverage",
     "pytest",
     "pytest-cov",
+    "zipp",
 ]
 
 doc_requires = [
@@ -32,19 +31,19 @@ setup(
     maintainer_email="zane.selvans@catalyst.coop",
     project_urls={
         "Source": "https://github.com/catalyst-cooperative/dbfread",
-#        "Documentation": "https://catalystcoop-dbfread.readthedocs.io",
+        # "Documentation": "https://catalystcoop-dbfread.readthedocs.io",
         "Issue Tracker": "https://github.com/catalyst-cooperative/dbfread/issues",
     },
     package_data={"": ["LICENSE"]},
     package_dir={"": "src"},
-    packages = find_packages("src"),
+    packages=find_packages("src"),
     include_package_data=True,
     zip_safe=True,
     install_requires=[],
     extras_require={
         "doc": doc_requires,
         "test": test_requires,
-        },
+    },
     scripts=["examples/dbf2sqlite"],
     python_requires=">=3.6",
     license="MIT",

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-from pathlib import Path, PosixPath
+from pathlib import Path
 from zipfile import ZipFile
 from dbfread import DBF
 from dbfread.memo import VFPMemoFile
 
 import pytest
+import zipp
 
 TESTCASE_PATH = Path(__file__).parent.parent / "testcases"
 
@@ -60,8 +61,8 @@ class TestDBF:
         self.check_alice_bob(dataset[0], dataset[1])
 
     @pytest.mark.xfail(os.name != "posix", reason="ZipFiles use POSIX paths.")
-    def test_zipfile_path_open(self):
-        """Make sure we can open by passing OS specific zipfile paths."""
+    def test_zipfile_strpath_open(self):
+        """Attempt to open OS specific zipfile paths."""
         zf = ZipFile(TESTCASE_PATH / "testcases.zip")
         memotest_path_str = str(Path("testcases/memotest.dbf"))
         memomemo_path_str = str(Path("testcases/memotest.FPT"))
@@ -75,14 +76,29 @@ class TestDBF:
         dataset = list(data)
         self.check_alice_bob(dataset[0], dataset[1])
 
-    def test_zipfile_posixpath_open(self):
-        """Make sure we can open by passing POSIX zipfile paths."""
+    def test_zipfile_dumbpath_open(self):
+        """Attempt to open hard-coded POSIX paths ("/" as path separator)."""
         zf = ZipFile(TESTCASE_PATH / "testcases.zip")
-        memotest_path_str = str(PosixPath("testcases/memotest.dbf"))
-        memomemo_path_str = str(PosixPath("testcases/memotest.FPT"))
+        memotest_path_str = "testcases/memotest.dbf"
+        memomemo_path_str = "testcases/memotest.FPT"
 
         with zf.open(memotest_path_str) as mt:
             with zf.open(memomemo_path_str) as mm:
+                data = DBF("memotest", filedata=mt, memofile=VFPMemoFile(mm.read()))
+
+        assert data.__class__ is DBF
+
+        dataset = list(data)
+        self.check_alice_bob(dataset[0], dataset[1])
+
+    def test_zipfile_zippath_open(self):
+        """Attempt to open POSIX only zipfile paths."""
+        zf = ZipFile(TESTCASE_PATH / "testcases.zip")
+        memotest_path = zipp.Path(zf, at="testcases/memotest.dbf")
+        memomemo_path = zipp.Path(zf, at="testcases/memotest.FPT")
+
+        with memotest_path.open("rb") as mt:
+            with memomemo_path.open("rb") as mm:
                 data = DBF("memotest", filedata=mt, memofile=VFPMemoFile(mm.read()))
 
         assert data.__class__ is DBF
