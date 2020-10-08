@@ -20,7 +20,7 @@ long_description = readme_path.read_text()
 
 setup(
     name="catalystcoop.dbfread",
-    version="2.1.1",
+    version="3.0.0",
     description="Read DBF Files with Python",
     long_description=long_description,
     long_description_content_type="text/x-rst",
