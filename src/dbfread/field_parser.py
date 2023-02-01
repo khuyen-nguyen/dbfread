@@ -3,7 +3,7 @@ import datetime
 import struct
 from decimal import Decimal
 from dbfread.memo import BinaryMemo
-from convert_vn import Converter
+from dbfread.convert_vn import Converter
 
 
 class InvalidValue(bytes):
