@@ -3,6 +3,7 @@ import datetime
 import struct
 from decimal import Decimal
 from dbfread.memo import BinaryMemo
+from vn_converter import Converter
 
 
 class InvalidValue(bytes):
@@ -22,13 +23,15 @@ class FieldParser:
         self.encoding = table.encoding
         self.char_decode_errors = table.char_decode_errors
         self._lookup = self._create_lookup_table()
+        self._converter = Converter()
         if memofile:
             self.get_memo = memofile.__getitem__
         else:
             self.get_memo = lambda x: None
 
     def decode_text(self, text):
-        return str(text, self.encoding, errors=self.char_decode_errors)
+        text = str(text, self.encoding, errors=self.char_decode_errors)
+        return self._converter.convert(text, "UNICODE", "TCVN3")
 
     def _create_lookup_table(self):
         """Create a lookup table for field types."""
@@ -77,12 +80,13 @@ class FieldParser:
         try:
             return datetime.date(int(data[:4]), int(data[4:6]), int(data[6:8]))
         except ValueError:
-            if (''.join(data.decode().split('\x00')) == '') or (data.strip(b' 0\0') == b''):
-                # A record containing only spaces and/or zeros is
-                # a NULL value.
-                return None
-            else:
-                raise ValueError(f'invalid date {data!r}')
+            return None
+            # if (''.join(data.decode().split('\x00')) == '') or (data.strip(b' 0\0') == b''):
+            #     # A record containing only spaces and/or zeros is
+            #     # a NULL value.
+            #     return None
+            # else:
+            #     raise ValueError(f'invalid date {data!r}')
 
     def parseF(self, field, data):
         """Parse float field and return float or None"""
@@ -157,7 +161,10 @@ class FieldParser:
                 return None
             else:
                 # Account for , in numeric fields
-                return float(data.replace(b',', b'.'))
+                try:
+                    return float(data.replace(b',', b'.'))
+                except ValueError:
+                    return None
 
     def parseO(self, field, data):
         """Parse long field (O) and return float."""
