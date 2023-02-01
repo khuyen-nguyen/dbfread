@@ -83,6 +83,8 @@ class DBF(object):
                  raw=False,
                  ignore_missing_memofile=False,
                  char_decode_errors='strict',
+                 source_charset=None,
+                 target_charset=None,
                  filedata=None,
                  memofile=None):
 
@@ -90,6 +92,8 @@ class DBF(object):
         self.ignorecase = ignorecase
         self.lowernames = lowernames
         self.parserclass = parserclass
+        self.source_charset = source_charset
+        self.target_charset = target_charset
         self.raw = raw
         self.ignore_missing_memofile = ignore_missing_memofile
         self.char_decode_errors = char_decode_errors

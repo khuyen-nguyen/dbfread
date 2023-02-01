@@ -3,7 +3,7 @@ import datetime
 import struct
 from decimal import Decimal
 from dbfread.memo import BinaryMemo
-from vn_converter import Converter
+from convert_vn import Converter
 
 
 class InvalidValue(bytes):
@@ -23,7 +23,11 @@ class FieldParser:
         self.encoding = table.encoding
         self.char_decode_errors = table.char_decode_errors
         self._lookup = self._create_lookup_table()
-        self._converter = Converter()
+        self._text_converter = None
+
+        if table.target_charset and table.source_charset:
+            self._text_converter = Converter(table.target_charset, table.source_charset)
+
         if memofile:
             self.get_memo = memofile.__getitem__
         else:
@@ -31,7 +35,10 @@ class FieldParser:
 
     def decode_text(self, text):
         text = str(text, self.encoding, errors=self.char_decode_errors)
-        return self._converter.convert(text, "UNICODE", "TCVN3")
+        if self._text_converter:
+            return self._text_converter.convert(text)
+
+        return text
 
     def _create_lookup_table(self):
         """Create a lookup table for field types."""

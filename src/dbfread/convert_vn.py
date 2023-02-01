@@ -22,7 +22,7 @@ class Converter:
 
     """Convert qua lai giua mot so bang ma cua Vietnam"""
 
-    def __init__(self):
+    def __init__(self, target_charset="UNICODE", source_charset=None):
         """Khoi tao"""
         self.TCVN3 = ["Aµ", "A¸", "¢", "A·", "EÌ", "EÐ", "£", "I×", "IÝ", "Oß",
                       "Oã", "¤", "Oâ", "Uï", "Uó", "Yý", "µ", "¸", "©", "·",
@@ -144,33 +144,21 @@ class Converter:
                            "õ", "õ", "ö", "ö", "ø", "ø", "ù", "ù", "ÿ", "ÿ",
                            "ú", "ú", "û", "û", "."]
 
+        self.mapping_charsets = {}
+        self.build_mapping_charset(source_charset, target_charset)
         pass
 
-    def convert(self, str_original, target_charset="UNICODE", source_charset=None):
-        if (source_charset == None):
-            source_charset = self.detectCharset(str_original)
+    def build_mapping_charset(self, source_charset, target_charset):
+        source_charset = getattr(self,source_charset)
+        target_charset = getattr(self,target_charset)
+        for idx in range(len(source_charset)):
+            self.mapping_charsets[source_charset[idx]] = target_charset[idx]
 
-        if (source_charset == None):
-            raise TypeError("Can not get charset of str_original")
+    def convert_char(self, char):
+        if char in self.mapping_charsets:
+            return self.mapping_charsets[char]
 
-        source_charset = getattr(self, source_charset)
-        target_charset = getattr(self, target_charset)
+        return char
 
-        map_length = len(source_charset)
-        for number in range(map_length):
-            str_original = str_original.replace(
-                source_charset[number], "::" + str(number) + "::")
-
-        for number in range(map_length):
-            str_original = str_original.replace(
-                "::" + str(number) + "::", target_charset[number])
-
-        return str_original
-
-    def detectCharset(self, str_input):
-        for pattern in patterns:
-            match = re.search(patterns[pattern][0],
-                              str_input, patterns[pattern][1])
-            if (match != None):
-                return pattern
-        return None
+    def convert(self, str_original):
+        return "".join(map(self.convert_char, list(str_original)))
